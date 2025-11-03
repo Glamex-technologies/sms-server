@@ -8,6 +8,7 @@ const models = require("./startup/model");
 
 // Import routes
 const otpRoutes = require("./application/routes/otp.routes");
+const giftRoutes = require("./application/routes/gift.routes");
 
 const app = express();
 
@@ -55,6 +56,9 @@ app.get("/health", (req, res) => otpController.healthCheck(req, res));
 
 // Mount OTP routes
 app.use("/otp", otpRoutes);
+
+// Mount Gift routes
+app.use("/gift", giftRoutes);
 
 // 404 handler for undefined routes
 app.use((req, res) => {
