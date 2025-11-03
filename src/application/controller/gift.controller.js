@@ -181,5 +181,10 @@ class GiftController {
   }
 }
 
-module.exports = new GiftController();
+const giftController = new GiftController();
+
+// Bind methods to preserve 'this' context
+giftController.sendGiftNotification = giftController.sendGiftNotification.bind(giftController);
+
+module.exports = giftController;
 
