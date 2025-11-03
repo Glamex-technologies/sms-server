@@ -26,15 +26,50 @@ This server is designed to be deployed on a **static IP address** to work with U
 ### Installation
 
 ```bash
-# Install dependencies
-npm install
 
-# Copy environment file
-cp .env.example .env
+# Install nginx and node
+sudo apt update
+sudo apt install nginx node npm
+
+# Install pm2
+sudo npm install pm2 -g
+
+# Install dependencies
+cd sms-server
+npm install
 
 # Configure environment variables (see Configuration section)
 # Start server
-npm start
+pm2 start src/app.js --name "sms-server"
+
+# Test Server
+
+sudo ss -ltnp | grep 8081
+
+# NGINX conf
+
+sudo nano /etc/nginx/sites-available/default
+
+
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:8081;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+# Save and test
+sudo nginx -t
+sudo systemctl restart nginx
+
+
 ```
 
 ## ⚙️ Configuration
