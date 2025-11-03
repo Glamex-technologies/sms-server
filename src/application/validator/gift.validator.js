@@ -123,11 +123,10 @@ class GiftValidator {
         
         deeplink_url: Joi.string()
           .uri()
-          .required()
+          .optional()
+          .allow(null, '')
           .messages({
             'string.uri': 'deeplink_url must be a valid URL',
-            'any.required': 'deeplink_url is required',
-            'string.empty': 'deeplink_url cannot be empty',
           }),
       });
 

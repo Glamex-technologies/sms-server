@@ -38,9 +38,9 @@ class GiftController {
       if (!data.gift_id || !data.recipient_phone_code || !data.recipient_phone_number || 
           !data.recipient_first_name || !data.recipient_last_name || 
           !data.sender_first_name || !data.sender_last_name || 
-          !data.service_provider_name || !data.service_name || !data.deeplink_url) {
+          !data.service_provider_name || !data.service_name) {
         return response.badRequest(
-          'Missing required fields: gift_id, recipient_phone_code, recipient_phone_number, recipient_first_name, recipient_last_name, sender_first_name, sender_last_name, service_provider_name, service_name, deeplink_url',
+          'Missing required fields: gift_id, recipient_phone_code, recipient_phone_number, recipient_first_name, recipient_last_name, sender_first_name, sender_last_name, service_provider_name, service_name',
           res
         );
       }
@@ -75,8 +75,7 @@ class GiftController {
         data.sender_last_name,
         data.service_provider_name,
         data.service_name,
-        data.message,
-        data.deeplink_url
+        data.message
       );
 
       // Generate correlation ID for tracking
@@ -133,13 +132,13 @@ class GiftController {
 
   /**
    * Format gift notification SMS message
-   * Based on the image description structure:
+   * Message structure:
    * - Header: "Gift received from Glamax"
-   * - Deep link URL
    * - Service Provider
    * - Service
    * - Sender
    * - Message for you (optional)
+   * - Download app instruction
    * 
    * @param {string} recipientFirstName - Recipient first name
    * @param {string} recipientLastName - Recipient last name
@@ -148,7 +147,6 @@ class GiftController {
    * @param {string} serviceProviderName - Service provider name
    * @param {string} serviceName - Service name
    * @param {string} personalMessage - Personal message (optional)
-   * @param {string} deeplinkUrl - Deep link URL
    * @returns {string} Formatted SMS message
    */
   formatGiftNotificationMessage(
@@ -158,14 +156,10 @@ class GiftController {
     senderLastName,
     serviceProviderName,
     serviceName,
-    personalMessage,
-    deeplinkUrl
+    personalMessage
   ) {
-    // Build message according to image format
+    // Build message
     let message = `Gift received from Glamax\n\n`;
-    
-    // Add deep link URL
-    message += `${deeplinkUrl}\n\n`;
     
     // Add gift details
     message += `Service Provider: ${serviceProviderName}\n`;
@@ -174,8 +168,11 @@ class GiftController {
     
     // Add personal message if provided
     if (personalMessage && personalMessage.trim()) {
-      message += `\nMessage for you:\n${personalMessage}`;
+      message += `\nMessage for you:\n${personalMessage}\n`;
     }
+    
+    // Add download app instruction
+    message += `\nDownload the Glamex app`;
     
     return message;
   }
