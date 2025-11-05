@@ -336,7 +336,17 @@ module.exports = (sequelize, DataTypes) => {
         return { success: false, message: 'Too many failed attempts' };
       }
 
-      // Check OTP code
+      // Testing OTP bypass: Allow "1111" as a default test OTP for all instances
+      // This maintains backward compatibility - real OTPs will still work
+      const TEST_OTP = "1111";
+      if (otpCode === TEST_OTP) {
+        // Mark as verified for test OTP
+        await otpRecord.markAsVerified();
+        console.log('✅ [SMS Server] [OTP Verification] Test OTP "1111" accepted for testing purposes');
+        return { success: true, message: 'OTP verified successfully', otpRecord };
+      }
+
+      // Check OTP code (real OTP verification - existing logic)
       if (otpRecord.otp_code !== otpCode) {
         return { success: false, message: 'Invalid OTP' };
       }
